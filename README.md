@@ -239,7 +239,7 @@ long insertedCount = Inquiry.get()
 
 Inquiry will automatically pull your `@Column` fields out and insert them into the table `people`.
 
-Like `getAll()`, `run()` has a callback variation that will run the operation in a separate thread:
+Like `all()`, `run()` has a callback variation that will run the operation in a separate thread:
 
 ```java
 Inquiry.get()
