@@ -100,6 +100,7 @@ class ClassRowConverter {
         StringBuilder sb = new StringBuilder();
         Field[] fields = cls.getDeclaredFields();
         for (Field fld : fields) {
+            fld.setAccessible(true);
             final String schema = getFieldSchema(fld);
             if (schema == null) continue;
             if (sb.length() > 0)
@@ -184,6 +185,7 @@ class ClassRowConverter {
             final int columnType = cursorTypeToColumnType(cursor.getType(columnIndex));
             try {
                 final Field columnField = cls.getDeclaredField(columnName);
+                columnField.setAccessible(true);
                 loadFieldIntoRow(cursor, columnField, row, columnIndex, columnType);
             } catch (NoSuchFieldException e) {
                 throw new IllegalStateException(String.format("No field found in %s for column %s (of type %s)",
@@ -208,6 +210,7 @@ class ClassRowConverter {
             Field[] fields = row.getClass().getDeclaredFields();
             int columnCount = 0;
             for (Field fld : fields) {
+                fld.setAccessible(true);
                 if (projection != null && projection.length > 0) {
                     boolean skip = true;
                     for (String proj : projection) {

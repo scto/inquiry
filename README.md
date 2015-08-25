@@ -20,7 +20,7 @@ Then, add Inquiry to your dependencies list:
 
 ```gradle
 dependencies {
-    compile 'com.afollestad:inquiry:1.1.1'
+    compile 'com.afollestad:inquiry:1.1.2'
 }
 ```
 
