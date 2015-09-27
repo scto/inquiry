@@ -56,7 +56,7 @@ public final class Query<RowType> {
     private int mLimit;
     private RowType[] mValues;
 
-    public Query<RowType> projection(@NonNull String[] columns) {
+    public Query<RowType> projection(@NonNull String... columns) {
         mProjection = columns;
         return this;
     }

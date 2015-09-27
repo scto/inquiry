@@ -20,7 +20,7 @@ Then, add Inquiry to your dependencies list:
 
 ```gradle
 dependencies {
-    compile 'com.afollestad:inquiry:1.1.2'
+    compile 'com.afollestad:inquiry:1.1.3'
 }
 ```
 
@@ -194,7 +194,7 @@ If you only wanted certain columns in the results to be filled in, you could use
 ```java
 Person[] result = Inquiry.get()
     .selectFrom("people", Person.class)
-    .projection(new String[] { "_id", "age" })
+    .projection("_id", "age")
     .all();
 ```
 
@@ -284,7 +284,7 @@ long updatedCount = Inquiry.get()
     .update("people", Person.class)
     .values(two)
     .where("name = ?", "Aidan")
-    .projection(new String[] { "age", "rank" })
+    .projection("age", "rank")
     .run();
 ```
 
@@ -373,7 +373,6 @@ You can perform all the same operations, but you pass a `content://` URI instead
 
 ```java
 Uri artistsUri = Uri.parse("content://media/internal/audio/artists");
-
 Artist[] artists = Inquiry.get()
     .selectFrom(artistsUri, Artist.class)
     .all();
