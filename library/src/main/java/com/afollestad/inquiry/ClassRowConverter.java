@@ -112,6 +112,7 @@ class ClassRowConverter {
         return sb.toString();
     }
 
+    @DataType.TypeDef
     private static int cursorTypeToColumnType(int cursorType) {
         switch (cursorType) {
             default:
@@ -125,9 +126,15 @@ class ClassRowConverter {
         }
     }
 
-    private static void loadFieldIntoRow(Cursor cursor, Field field, Object row, int columnIndex, int columnType) throws Exception {
+    private static void loadFieldIntoRow(Cursor cursor, Field field, Object row, int columnIndex, @DataType.TypeDef int columnType) throws Exception {
         if (cursor.isNull(columnIndex)) {
-            field.set(row, null);
+            if (columnType == DataType.INTEGER) {
+                field.set(row, 0);
+            } else if (columnType == DataType.REAL) {
+                field.set(row, 0.0);
+            } else {
+                field.set(row, null);
+            }
             return;
         }
         final Class<?> fieldType = field.getType();
