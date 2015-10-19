@@ -127,17 +127,24 @@ class ClassRowConverter {
     }
 
     private static void loadFieldIntoRow(Cursor cursor, Field field, Object row, int columnIndex, @DataType.TypeDef int columnType) throws Exception {
+        final Class<?> fieldType = field.getType();
         if (cursor.isNull(columnIndex)) {
-            if (columnType == DataType.INTEGER) {
+            if (fieldType == short.class || fieldType == Short.class ||
+                    fieldType == int.class || fieldType == Integer.class ||
+                    fieldType == long.class || fieldType == Long.class) {
                 field.set(row, 0);
-            } else if (columnType == DataType.REAL) {
-                field.set(row, 0.0);
+            } else if (fieldType == float.class || fieldType == Float.class) {
+                field.set(row, 0f);
+            } else if (fieldType == double.class || fieldType == Double.class) {
+                field.set(row, 0d);
+            } else if (fieldType == boolean.class || fieldType == Boolean.class) {
+                field.set(row, false);
             } else {
                 field.set(row, null);
             }
             return;
         }
-        final Class<?> fieldType = field.getType();
+
         switch (columnType) {
             case DataType.BLOB:
                 byte[] blob = cursor.getBlob(columnIndex);
