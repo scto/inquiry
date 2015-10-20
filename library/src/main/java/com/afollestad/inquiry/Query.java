@@ -49,17 +49,12 @@ public final class Query<RowType> {
                 tableName, ClassRowConverter.getClassSchema(mClass));
     }
 
-    private String[] mProjection;
+    private String[] mOnlyUpdate;
     private String mSelection;
     private String[] mSelectionArgs;
     private String mSortOrder;
     private int mLimit;
     private RowType[] mValues;
-
-    public Query<RowType> projection(@NonNull String... columns) {
-        mProjection = columns;
-        return this;
-    }
 
     public Query<RowType> where(@NonNull String selection, @Nullable Object... selectionArgs) {
         mSelection = selection;
@@ -89,19 +84,25 @@ public final class Query<RowType> {
         return this;
     }
 
+    public Query<RowType> onlyUpdate(@NonNull String... values) {
+        mOnlyUpdate = values;
+        return this;
+    }
+
     @SuppressWarnings("unchecked")
     @Nullable
     private RowType[] getInternal(int limit) {
         if (mRowClass == null) return null;
+        final String[] projection = ClassRowConverter.generateProjection(mRowClass);
         if (mQueryType == SELECT) {
             String sort = mSortOrder;
             if (limit > -1) sort += String.format(" LIMIT %d", limit);
             Cursor cursor;
             if (mContentUri != null) {
-                cursor = mInquiry.mContext.getContentResolver().query(mContentUri, mProjection, mSelection, mSelectionArgs, mSortOrder);
+                cursor = mInquiry.mContext.getContentResolver().query(mContentUri, projection, mSelection, mSelectionArgs, mSortOrder);
             } else {
                 if (mDatabase == null) throw new IllegalStateException("Database helper was null.");
-                cursor = mDatabase.query(mProjection, mSelection, mSelectionArgs, sort);
+                cursor = mDatabase.query(projection, mSelection, mSelectionArgs, sort);
             }
             if (cursor != null) {
                 RowType[] results = null;
@@ -170,7 +171,7 @@ public final class Query<RowType> {
                 } else
                     throw new IllegalStateException("Database helper was null.");
             case UPDATE: {
-                final ContentValues values = ClassRowConverter.clsToVals(mValues[mValues.length - 1], mProjection);
+                final ContentValues values = ClassRowConverter.clsToVals(mValues[mValues.length - 1], mOnlyUpdate);
                 if (mDatabase != null)
                     return mDatabase.update(values, mSelection, mSelectionArgs);
                 else if (mContentUri != null)

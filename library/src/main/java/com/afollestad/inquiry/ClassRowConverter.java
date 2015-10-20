@@ -18,6 +18,7 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -216,6 +217,18 @@ class ClassRowConverter {
         for (int i = 0; i < rows.length; i++)
             vals[i] = clsToVals(rows[i], projection);
         return vals;
+    }
+
+    public static String[] generateProjection(Class<?> cls) {
+        final ArrayList<String> projection = new ArrayList<>();
+        final Field[] fields = cls.getDeclaredFields();
+        for (Field fld : fields) {
+            fld.setAccessible(true);
+            Column colAnn = fld.getAnnotation(Column.class);
+            if (colAnn == null) continue;
+            projection.add(fld.getName());
+        }
+        return projection.toArray(new String[projection.size()]);
     }
 
     public static ContentValues clsToVals(@NonNull Object row, @Nullable String[] projection) {

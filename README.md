@@ -34,12 +34,12 @@ dependencies {
 2. [Example Row](https://github.com/afollestad/inquiry#example-row)
 3. [Querying Rows](https://github.com/afollestad/inquiry#querying-rows)
     1. [Basics](https://github.com/afollestad/inquiry#basics)
-    2. [Where and Projection](https://github.com/afollestad/inquiry#where-and-projection)
+    2. [Where](https://github.com/afollestad/inquiry#wheren)
     3. [Sorting and Limiting](https://github.com/afollestad/inquiry#sorting-and-limiting)
 4. [Inserting Rows](https://github.com/afollestad/inquiry#inserting-rows)
 5. [Updating Rows](https://github.com/afollestad/inquiry#updating-rows)
     1. [Basics](https://github.com/afollestad/inquiry#basics-1)
-    2. [Projection](https://github.com/afollestad/inquiry#projection)
+    2. [Updating Specific Columns](https://github.com/afollestad/inquiry#updating-specific-columns)
 6. [Deleting Rows](https://github.com/afollestad/inquiry#deleting-rows)
 7. [Dropping Tables](https://github.com/afollestad/inquiry#dropping-tables)
 8. [Extra: Accessing Content Providers](https://github.com/afollestad/inquiry#extra-accessing-content-providers)
@@ -163,7 +163,7 @@ Inquiry.get()
 
 Inquiry will automatically fill in your `@Column` fields with matching columns in each row of the table.
 
-#### Where and Projection
+#### Where
 
 If you wanted to find rows with specific values in their columns, you can use `where` selection:
 
@@ -188,18 +188,6 @@ If you wanted, you could skip using the question marks and only use one paramete
 
 *However*, using the question marks and filler parameters can be easier to read if you're filling them in
 with variables. Plus, this will automatically escape any strings that contain reserved SQL characters.
-
-If you only wanted certain columns in the results to be filled in, you could use projection:
-
-```java
-Person[] result = Inquiry.get()
-    .selectFrom("people", Person.class)
-    .projection("_id", "age")
-    .all();
-```
-
-Fields not included in projection will be set to their default values (e.g. null for objects,
-0 for numbers, false for booleans, etc.).
 
 #### Sorting and Limiting
 
@@ -272,10 +260,10 @@ long updatedCount = Inquiry.get()
 The above will update all rows whose name is equal to *"Aidan"*, setting all columns to the values in the `Person`
 object called `two`. If you didn't specify `where()` args, every row in the table would be updated.
 
-#### Projection
+#### Updating Specific Columns
 
 Sometimes, you don't want to change every column in a row when you update them. You can choose specifically
-what columns you want to be changed using projection:
+what columns you want to be changed using `onlyUpdate`:
 
 ```java
 Person two = new Person("Natalie", 42, 10f, false);
@@ -284,7 +272,7 @@ long updatedCount = Inquiry.get()
     .update("people", Person.class)
     .values(two)
     .where("name = ?", "Aidan")
-    .projection("age", "rank")
+    .onlyUpdate("age", "rank")
     .run();
 ```
 
